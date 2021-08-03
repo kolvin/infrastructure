@@ -2,8 +2,8 @@ version: ">= 0.14"
 
 formatter: markdown table
 
-header-from: main.tf
-footer-from: outputs.tf
+header-from: header.md
+footer-from: footer.md
 
 sections:
   show: []

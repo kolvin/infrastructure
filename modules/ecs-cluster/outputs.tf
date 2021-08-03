@@ -1,8 +1,3 @@
-/**
- * # License
- * GNU GENERAL PUBLIC LICENSE. See [LICENSE](../../LICENSE) for full details.
- */
-
 output "id" {
   value       = aws_ecs_cluster.this.id
   sensitive   = false
