@@ -1,4 +1,28 @@
 locals {
+  awslogs_group         = var.logs_cloudwatch_group == "" ? "/ecs/${var.environment}/${var.name}" : var.logs_cloudwatch_group
+  target_container_name = var.target_container_name == "" ? "${var.name}-${var.environment}" : var.target_container_name
+  cloudwatch_alarm_name = var.cloudwatch_alarm_name == "" ? "${var.name}-${var.environment}" : var.cloudwatch_alarm_name
+
+  # for each target group, allow ingress from the alb to ecs container port
+  lb_ingress_container_ports = distinct(
+    [
+      for lb_target_group in var.lb_target_groups : lb_target_group.container_port
+    ]
+  )
+
+  # for each target group, allow ingress from the alb to ecs healthcheck port
+  # if it doesn't collide with the container ports
+  lb_ingress_container_health_check_ports = tolist(
+    setsubtract(
+      [
+        for lb_target_group in var.lb_target_groups : lb_target_group.container_health_check_port
+      ],
+      local.lb_ingress_container_ports,
+    )
+  )
+}
+
+locals {
   ecs_service_launch_type  = var.ecs_use_fargate ? "FARGATE" : "EC2"
   fargate_platform_version = var.ecs_use_fargate ? var.fargate_platform_version : null
 

@@ -62,7 +62,14 @@ variable "security_group_ids" {
   type        = list(string)
 }
 
+
 // ALB 
+variable "target_container_name" {
+  description = "Name of the container the Load Balancer should target. Default: {name}-{environment}"
+  default     = ""
+  type        = string
+}
+
 variable "associate_alb" {
   description = "Whether to associate an Application Load Balancer (ALB) with the ECS service."
   default     = false
