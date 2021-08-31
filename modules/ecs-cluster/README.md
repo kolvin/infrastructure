@@ -31,17 +31,17 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_name"></a> [name](#input\_name) | Name for this cluster | `string` | n/a | yes |
 | <a name="input_enable_container_insights"></a> [enable\_container\_insights](#input\_enable\_container\_insights) | Do you want to enable container insights for this cluster | `bool` | `false` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name for this cluster | `string` | `""` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags for this cluster | `map(string)` | `{}` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_arn"></a> [arn](#output\_arn) | ARN of this ecs cluster |
-| <a name="output_id"></a> [id](#output\_id) | ID of this ecs cluster |
-| <a name="output_name"></a> [name](#output\_name) | Name of this ecs cluster |
+| <a name="output_cluster_arn"></a> [cluster\_arn](#output\_cluster\_arn) | ARN of this ECS cluster |
+| <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | ID of this ECS cluster |
+| <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | Name of this ECS cluster |
 
 # License
 GNU GENERAL PUBLIC LICENSE. See [LICENSE](../../LICENSE) for full details.

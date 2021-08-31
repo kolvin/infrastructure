@@ -1,20 +1,17 @@
-output "id" {
+output cluster_id {
+  sensitive   = false
   value       = aws_ecs_cluster.this.id
-  sensitive   = false
-  description = "ID of this ecs cluster"
-  depends_on  = []
+  description = "ID of this ECS cluster"
 }
 
-output "arn" {
+output cluster_arn {
+  sensitive   = false
   value       = aws_ecs_cluster.this.arn
-  sensitive   = false
-  description = "ARN of this ecs cluster"
-  depends_on  = []
+  description = "ARN of this ECS cluster"
 }
 
-output "name" {
-  value       = aws_ecs_cluster.this.name
+output cluster_name {
   sensitive   = false
-  description = "Name of this ecs cluster"
-  depends_on  = []
+  value       = aws_ecs_cluster.this.name
+  description = "Name of this ECS cluster"
 }
