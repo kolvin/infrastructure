@@ -32,5 +32,4 @@ override.tf.json
 .idea/
 
 # Temp
-services
 .github
