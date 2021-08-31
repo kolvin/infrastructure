@@ -19,7 +19,6 @@ variable environment {
   description = "An environment for this instantiation."
 }
 
-
 variable service_name {
   type        = string
   description = "The name of the service being created."
@@ -121,36 +120,6 @@ variable service_discovery_create_registry {
   default     = "yes"
 }
 
-variable service_discovery_namespace_id {
-  type        = string
-  description = "The ID of the service discovery namespace in which to create the service discovery registry. Required if service_discovery_create_registry is \"yes\"."
-  default     = ""
-}
-
-variable service_discovery_registry_arn {
-  type        = string
-  description = "The ARN of the service discovery registry into which to register the service. Required if service_discovery_create_registry is \"no\"."
-  default     = ""
-}
-
-variable service_discovery_record_type {
-  type        = string
-  description = "The type of record to create when registering the service in service discovery."
-  default     = "SRV"
-}
-
-variable service_discovery_container_name {
-  type        = string
-  description = "The container name to use when registering the service in service discovery. Defaults to the service name."
-  default     = ""
-}
-
-variable service_discovery_container_port {
-  type        = string
-  description = "The container port to use when registering the service in service discovery. Defaults to the service port."
-  default     = ""
-}
-
 variable associate_default_security_group {
   type        = string
   description = "Whether or not to create and associate a default security group for the tasks created by this service (\"yes\" or \"no\"). Defaults to \"yes\". Only applicable when service_task_network_mode is \"awsvpc\"."
@@ -181,7 +150,7 @@ variable default_security_group_egress_cidrs {
   default     = ["0.0.0.0/0"]
 }
 
-variable service_role {
+variable service_role_arn {
   type        = string
   description = "The ARN of the service task role to use."
   default     = ""
@@ -205,26 +174,14 @@ variable placement_constraints {
   default     = []
 }
 
-variable ecs_cluster_id {
+variable cluster_id {
   type        = string
   description = "The ID of the ECS cluster in which to deploy the service."
 }
 
-variable ecs_cluster_service_role_arn {
+variable cluster_service_role_arn {
   type        = string
   description = "The ARN of the IAM role to provide to ECS to manage the service."
-}
-
-variable include_log_group {
-  type        = string
-  description = "Whether or not to create a log group for the service (\"yes\" or \"no\"). Defaults to \"yes\"."
-  default     = "yes"
-}
-
-variable log_group_retention {
-  type        = number
-  description = "The number of days you want to retain log events. See cloudwatch_log_group for possible values. Defaults to 0 (forever)."
-  default     = 0
 }
 
 variable force_new_deployment {

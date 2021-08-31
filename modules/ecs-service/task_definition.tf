@@ -16,10 +16,11 @@ resource "aws_ecs_task_definition" "this" {
   network_mode = var.service_task_network_mode
   pid_mode     = var.service_task_pid_mode
 
-  task_role_arn = var.service_role
+  task_role_arn = var.service_role_arn
 
   dynamic "volume" {
     for_each = var.service_volumes
+
     content {
       name      = volume.value.name
       host_path = lookup(volume.value, "host_path", null)
