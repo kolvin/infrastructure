@@ -5,7 +5,7 @@ variable region {
 
 variable vpc_id {
   type        = string
-  description = "The VPC into which to deploy this service."
+  description = "The VPC id in which to deploy this service."
 }
 
 variable subnet_ids {
@@ -27,7 +27,6 @@ variable service_name {
 variable service_image {
   type        = string
   description = "The docker image (including version) to deploy."
-  default     = ""
 }
 
 variable service_command {
@@ -69,7 +68,7 @@ variable service_deployment_maximum_percent {
 variable service_deployment_minimum_healthy_percent {
   type        = number
   description = "The minimum healthy percentage of the desired count to keep running."
-  default     = 50
+  default     = 100
 }
 
 variable service_health_check_grace_period_seconds {
@@ -106,18 +105,6 @@ variable target_port {
   type        = string
   description = "The port to which the load balancer should route traffic. Defaults to the service_port."
   default     = ""
-}
-
-variable register_in_service_discovery {
-  type        = string
-  description = "Whether or not this service should be registered in service discovery (\"yes\" or \"no\")."
-  default     = "no"
-}
-
-variable service_discovery_create_registry {
-  type        = string
-  description = "Whether or not to create a service discovery registry for this service (\"yes\" or \"no\")."
-  default     = "yes"
 }
 
 variable associate_default_security_group {
