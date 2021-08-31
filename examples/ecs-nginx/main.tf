@@ -22,6 +22,15 @@ module "vpc" {
   }
 }
 
+module lb {
+  source = "../../modules/lb"
+
+  name = "test"
+  subnets = module.vpc.public_subnets
+
+  depends_on = [module.vpc]
+}
+
 module "cluster" {
   source = "../../modules/ecs-cluster"
   name = "${local.environment}-${local.product_name}"
