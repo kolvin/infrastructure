@@ -10,6 +10,12 @@ output lb_arn {
   description = "The ARN of this load balancer"
 }
 
+output lb_name {
+  sensitive   = false
+  value = aws_lb.this.name
+  description = "The Name of this load balancer"
+}
+
 output lb_dns_name {
   sensitive   = false
   value = aws_lb.this.dns_name
