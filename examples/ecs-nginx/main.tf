@@ -1,15 +1,16 @@
 provider "aws" {
-  profile = "personal"
-  region  = "eu-west-1"
+  profile = var.profile
+  region  = var.region
 }
 
+// Network
 module "vpc" {
   source = "github.com/terraform-aws-modules/terraform-aws-vpc"
-  name   = "${local.environment}-${local.product_name}-vpc"
-  cidr = "${local.cdir_prefix}.0.0/16"
+  name   = "${var.environment}-${var.product_name}-vpc"
+  cidr = "${var.cdir_prefix}.0.0/16"
   azs             = ["eu-west-1a", "eu-west-1c"]
-  private_subnets = ["${local.cdir_prefix}.1.0/24", "${local.cdir_prefix}.3.0/24"]
-  public_subnets  = ["${local.cdir_prefix}.101.0/24", "${local.cdir_prefix}.103.0/24"]
+  private_subnets = ["${var.cdir_prefix}.1.0/24", "${var.cdir_prefix}.3.0/24"]
+  public_subnets  = ["${var.cdir_prefix}.101.0/24", "${var.cdir_prefix}.103.0/24"]
   enable_nat_gateway = true
   single_nat_gateway = true
   one_nat_gateway_per_az = false
@@ -17,15 +18,16 @@ module "vpc" {
   enable_dns_support   = true
 
   tags = {
-    Creator      = local.creator
-    Environment  = local.environment
-    Product      = local.product_name
+    Creator      = var.creator
+    Environment  = var.environment
+    Product      = var.product_name
   }
 }
 
+// Security Groups
 resource "aws_security_group" "load_balancer_access" {
-  name        = "${local.environment}-${local.product_name}-lb-access"
-  description = "Access to the ${local.environment} public facing load balancer"
+  name        = "${var.environment}-${var.product_name}-lb-access"
+  description = "Global HTTP/S access"
 
   ingress {
     from_port   = 80
@@ -49,30 +51,97 @@ resource "aws_security_group" "load_balancer_access" {
   }
 
   tags = {
-    Name         = "${local.environment}-${local.product_name}-lb-access"
-    Creator      = local.creator
-    Environment  = local.environment
-    Product      = local.product_name
+    Name         = "${var.environment}-${var.product_name}-lb-access"
+    Creator      = var.creator
+    Environment  = var.environment
+    Product      = var.product_name
   }
 
   vpc_id = module.vpc.vpc_id
-
-  depends_on = [module.vpc]
 }
 
+resource "aws_security_group" "instance_http_access" {
+  name        = "${var.environment}-${var.product_name}-instance-access"
+  description = "Allow inbound from load balancer"
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    security_groups = [aws_security_group.load_balancer_access.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name         = "${var.environment}-${var.product_name}-instance-access"
+    Creator      = var.creator
+    Environment  = var.environment
+    Product      = var.product_name
+  }
+
+  vpc_id = module.vpc.vpc_id
+}
+
+// Allow SSH access
+resource "aws_security_group" "ssh_access" {
+  name        = "${var.environment}-${var.product_name}-ssh-access"
+  description = "Allow SSH access"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name         = "${var.environment}-${var.product_name}-ssh-access"
+    Creator      = var.creator
+    Environment  = var.environment
+    Product      = var.product_name
+  }
+
+  vpc_id = module.vpc.vpc_id
+}
+
+// Load Balancer
 module lb {
   source = "../../modules/lb"
 
-  name = "${local.environment}-${local.product_name}-lb"
+  name = "${var.environment}-${var.product_name}-lb"
   subnets = module.vpc.public_subnets
 
   security_groups = [aws_security_group.load_balancer_access.id]
-  depends_on = [module.vpc]
 }
 
-// TG
+// HTTP Listener
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = module.lb.lb_arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.nginx-tg.arn
+  }
+}
+
+// Target Group
 resource "aws_lb_target_group" "nginx-tg" {
-  name                 = "${local.environment}-${local.product_name}-nginx-tg"
+  name                 = "${var.environment}-${var.product_name}-nginx-tg"
   port                 = 80
   protocol             = "HTTP"
   vpc_id               = module.vpc.vpc_id
@@ -84,73 +153,99 @@ resource "aws_lb_target_group" "nginx-tg" {
     unhealthy_threshold = 5
     matcher = "200-499"
   }
-
-  depends_on = [module.lb]
 }
 
-resource "aws_lb_listener_rule" "nginx" {
-  listener_arn = aws_lb_listener.http.arn
-  priority = 1
+// IAM Roles for ECS
+data "aws_iam_policy_document" "ecs_agent" {
+  statement {
+    actions = ["sts:AssumeRole"]
 
-  action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.nginx-tg.arn
-  }
-
-  condition {
-    host_header {
-      values = ["mydomain.co.uk"]
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
     }
   }
 }
 
-// Listeners
-resource "aws_lb_listener" "http" {
-  load_balancer_arn = module.lb.lb_arn
-  port              = "80"
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-
-    redirect {
-      port        = "443"
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-
-  depends_on = [module.lb]
+resource "aws_iam_role" "ecs_agent" {
+  name               = "ecs-agent"
+  assume_role_policy = data.aws_iam_policy_document.ecs_agent.json
+  managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"]
 }
 
+resource "aws_iam_instance_profile" "ecs_agent" {
+  name = "ecs-agent"
+  role = aws_iam_role.ecs_agent.name
+}
+
+// Base Image for ASG
+data "aws_ami" "ecs" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-ecs-hvm-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["amazon"]
+}
+
+// Container host ASG
+module auto-scaling-hosts {
+  source = "../../modules/asg"
+  name = "${var.environment}-${var.product_name}"
+  max_size = 2
+  min_size = 1
+  desired_capacity = 1
+  subnets = module.vpc.public_subnets
+  force_delete = true
+
+  iam_instance_profile_name = aws_iam_instance_profile.ecs_agent.name
+  image_id = data.aws_ami.ecs.id
+  instance_type = "t2.micro"
+
+  security_groups = [
+    aws_security_group.instance_http_access.id,
+    aws_security_group.ssh_access.id,
+  ]
+
+  associate_public_ip_address = true
+  key_name = "throwaway"
+
+  user_data = data.template_cloudinit_config.container-instances-config.rendered
+}
+
+// ECS Cluster
 module "cluster" {
   source = "../../modules/ecs-cluster"
-  name = "${local.environment}-${local.product_name}"
+  name = "${var.environment}-${var.product_name}"
   enable_container_insights = true
   tags = {
-    Name = "${local.environment}-ecs-cluster"
+    Name = "${var.environment}-ecs-cluster"
   }
 }
 
+// ECS Service
 module "service" {
   source = "../../modules/ecs-service"
-  region = local.region
+  region = var.region
 
   vpc_id = module.vpc.vpc_id
 
-  environment = local.environment
+  environment = var.environment
   service_name = "nginx"
   service_image = "nginx:latest"
   service_port = "80"
 
-  service_desired_count = "3"
-  service_deployment_maximum_percent = "50"
-  service_deployment_minimum_healthy_percent = "200"
+  service_desired_count = 1
 
   target_group_arn = aws_lb_target_group.nginx-tg.arn
 
   cluster_id = module.cluster.cluster_id
   cluster_service_role_arn = "arn:aws:iam::157140886817:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS"
-
-  depends_on = [module.lb]
 }

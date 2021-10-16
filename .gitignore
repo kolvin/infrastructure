@@ -30,6 +30,3 @@ override.tf.json
 
 # IDE
 .idea/
-
-# Temp
-.github

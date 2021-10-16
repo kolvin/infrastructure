@@ -15,14 +15,19 @@ variable min_size {
   description = "The minimum size of the Auto Scaling Group."
 }
 
+variable force_delete {
+  type        = bool
+  default     = false
+  description = "Allows deleting the Auto Scaling Group without waiting for all instances in the pool to terminate. You can force an Auto Scaling Group to delete even if it's in the process of scaling a resource. Normally, Terraform drains all the instances before deleting the group. This bypasses that behavior and potentially leaves resources dangling."
+}
+
 variable desired_capacity {
   type        = number
   default     = 1
   description = "The number of Amazon EC2 instances that should be running in the group."
 }
 
-
-variable vpc_zone_identifier {
+variable subnets {
   type        = list(string)
   default     = []
   description = " A list of subnet IDs to launch resources in. Subnets automatically determine which availability zones the group will reside. Conflicts with availability_zones"
@@ -42,6 +47,12 @@ variable image_id {
   type = string
   description = "The name for the autoscaling group for the cluster."
   default = "ami-001085c9389955bb6"
+}
+
+variable user_data {
+  type = string
+  description = "User data for new instances launching with this configuration"
+  default = ""
 }
 
 variable iam_instance_profile_name {
