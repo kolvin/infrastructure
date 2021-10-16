@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - feat/ci-cd
   - pull_request
 jobs:
   foo:
