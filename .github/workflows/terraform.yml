@@ -1,4 +1,4 @@
-name: 'Terraform Actions'
+name: 'Terraform'
 env:
   TERRAFORM_VERSION: 1.0.2
 on:
@@ -11,12 +11,11 @@ jobs:
     name: 'Terraform (Docker Service with ASG/ALB)'
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout'
-        uses: actions/checkout@master
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          tf_actions_working_dir: 'examples/docker-service-with-asg-alb'
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - name: Terraform Format
         id: fmt
