@@ -20,8 +20,7 @@ jobs:
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
-        with:
-          tf_actions_working_dir: 'examples/docker-service-with-asg-alb'
+        working-directory: 'examples/docker-service-with-asg-alb'
       - name: 'Terraform Init'
         uses: hashicorp/terraform-github-actions@master
         with:
