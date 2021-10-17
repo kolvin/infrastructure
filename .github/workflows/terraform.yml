@@ -2,7 +2,6 @@ name: 'Terraform CI'
 
 env:
   TERRAFORM_VERSION: 1.0.2
-  WORKING_DIR: 'examples/docker-service-with-asg-alb'
 
 on:
   push:
@@ -13,7 +12,7 @@ on:
 
 defaults:
   run:
-    working-directory: ${{ env.WORKING_DIR }}
+    working-directory: 'examples/docker-service-with-asg-alb'
 
 jobs:
   Terraform:
