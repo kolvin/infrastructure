@@ -10,6 +10,10 @@ on:
       - feat/ci-cd
   pull_request:
 
+defaults:
+  run:
+    working-directory: 'examples/docker-service-with-asg-alb'
+
 jobs:
   Terraform:
     name: 'Terraform (Docker Service with ASG/ALB)'
