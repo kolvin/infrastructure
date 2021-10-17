@@ -4,12 +4,6 @@ variable "region" {
   description = "AWS Region context"
 }
 
-variable "profile" {
-  default     = "personal"
-  type        = string
-  description = "Credentials Profile name"
-}
-
 variable "environment" {
   default     = "foo"
   type        = string
