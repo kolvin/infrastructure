@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - feat/ci-cd
+  pull_request:
 jobs:
   foo:
     name: 'Terraform (Docker Service with ASG/ALB)'
