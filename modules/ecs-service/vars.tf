@@ -78,9 +78,9 @@ variable service_health_check_grace_period_seconds {
 }
 
 variable attach_to_load_balancer {
-  type        = string
+  type        = bool
   description = "Whether or not this service should attach to a load balancer (\"yes\" or \"no\")."
-  default     = "yes"
+  default     = true
 }
 
 variable service_elb_name {
@@ -166,7 +166,7 @@ variable cluster_id {
   description = "The ID of the ECS cluster in which to deploy the service."
 }
 
-variable cluster_service_role_arn {
+variable task_role {
   type        = string
   description = "The ARN of the IAM role to provide to ECS to manage the service."
 }

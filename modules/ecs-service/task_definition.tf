@@ -1,17 +1,11 @@
-data "template_file" "service" {
-  template = "${file("${path.module}/service.json.tpl")}"
-
-  vars = {
+resource "aws_ecs_task_definition" "this" {
+  family                = "${var.environment}-${var.service_name}"
+  container_definitions = templatefile("${path.module}/service.json.tpl", {
     name      = var.service_name
     image     = var.service_image
     command   = jsonencode(var.service_command)
     port      = var.service_port
-  }
-}
-
-resource "aws_ecs_task_definition" "this" {
-  family                = "${var.environment}-${var.service_name}"
-  container_definitions = data.template_file.service.rendered
+  })
 
   network_mode = var.service_task_network_mode
   pid_mode     = var.service_task_pid_mode

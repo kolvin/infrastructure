@@ -3,12 +3,12 @@ resource "aws_ecs_service" "this" {
   cluster         = var.cluster_id
   task_definition = aws_ecs_task_definition.this.arn
   desired_count   = var.service_desired_count
-  iam_role        = (var.attach_to_load_balancer == "yes" && var.service_task_network_mode != "awsvpc") ? var.cluster_service_role_arn : null
+  iam_role        = (var.attach_to_load_balancer && var.service_task_network_mode != "awsvpc") ? var.task_role : null
 
   deployment_maximum_percent         = var.service_deployment_maximum_percent
   deployment_minimum_healthy_percent = var.service_deployment_minimum_healthy_percent
 
-  health_check_grace_period_seconds = var.attach_to_load_balancer == "yes" ? var.service_health_check_grace_period_seconds : null
+  health_check_grace_period_seconds = var.attach_to_load_balancer ? var.service_health_check_grace_period_seconds : null
 
   scheduling_strategy = var.scheduling_strategy
   force_new_deployment = var.force_new_deployment == "yes"
@@ -32,7 +32,7 @@ resource "aws_ecs_service" "this" {
   }
 
   dynamic "load_balancer" {
-    for_each = var.attach_to_load_balancer == "yes" ? [coalesce(var.target_group_arn, var.service_elb_name)] : []
+    for_each = var.attach_to_load_balancer ? [coalesce(var.target_group_arn, var.service_elb_name)] : []
 
     content {
       elb_name         = var.service_elb_name

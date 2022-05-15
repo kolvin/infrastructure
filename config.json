@@ -1,0 +1,18 @@
+{
+  "cloud_accounts": {
+    "aws": {
+      "account_id": "016272825626",
+      "account_name": "kloud",
+      "region": "eu-west-1",
+      "common_resource_tags" : {
+          "Creator": "terragrunt"
+      }
+    }
+  },
+  "terragrunt": {
+    "backend_filename": "backend.tf"
+  },
+  "base": {
+    "git_url" : "https://github.com/kolvin/infrastructure"
+  }
+}

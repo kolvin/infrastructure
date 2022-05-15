@@ -81,5 +81,6 @@ variable security_groups {
 
 variable key_name {
   type = string
+  default = ""
   description = "The key name that should be used for the instance."
 }
