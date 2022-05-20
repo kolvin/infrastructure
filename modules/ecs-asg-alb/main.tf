@@ -109,14 +109,14 @@ data "aws_ssm_parameter" "ecs_optimized_ami" {
 
 // Container host ASG
 resource "aws_autoscaling_group" "this" {
-  name                  = "${var.env}-${var.app_name}"
-  max_size              = 2
-  min_size              = 1
-  desired_capacity      = 1
-  vpc_zone_identifier   = module.vpc.public_subnets
-  launch_configuration  = aws_launch_configuration.this.name
-  health_check_type     = "EC2"
-  force_delete          = true
+  name                 = "${var.env}-${var.app_name}"
+  max_size             = 2
+  min_size             = 1
+  desired_capacity     = 1
+  vpc_zone_identifier  = module.vpc.public_subnets
+  launch_configuration = aws_launch_configuration.this.name
+  health_check_type    = "EC2"
+  force_delete         = true
 
   lifecycle {
     create_before_destroy = true
@@ -130,10 +130,9 @@ resource "aws_launch_configuration" "this" {
   instance_type               = "t2.micro"
   iam_instance_profile        = aws_iam_instance_profile.ecs_node_role.name
   associate_public_ip_address = false
-
   security_groups             = [aws_security_group.instance_http_access.id]
   key_name                    = ""
-  user_data                   = templatefile("${local.user_data_dir}/cluster-config.sh", {
+  user_data = templatefile("${local.user_data_dir}/cluster-config.sh", {
     ecs-cluster-name = aws_ecs_cluster.this.name
   })
 
@@ -147,36 +146,33 @@ resource "aws_ecs_cluster" "this" {
   name = "${var.env}-${var.app_name}"
 
   setting {
-    name = "containerInsights"
+    name  = "containerInsights"
     value = "enabled"
   }
 }
 
 // ECS service definition
 resource "aws_ecs_task_definition" "this" {
-  family                = "${var.env}-${var.app_name}"
+  family = "${var.env}-${var.app_name}"
   container_definitions = templatefile("${local.template_dir}/task_definition.json.tpl", {
-    name      = var.app_name
-    image     = var.app_image
-    command   = jsonencode(var.app_command)
-    port      = var.app_port
+    name    = var.app_name
+    image   = var.app_image
+    command = jsonencode(var.app_command)
+    port    = var.app_port
   })
 }
 
 // ECS Service
 resource "aws_ecs_service" "this" {
-  name            = "nginx"
-  cluster         = aws_ecs_cluster.this.id
-  task_definition = aws_ecs_task_definition.this.arn
-  desired_count   = 1
-  iam_role        = aws_iam_role.ecs_task_role.arn
-
+  name                               = "nginx"
+  cluster                            = aws_ecs_cluster.this.id
+  task_definition                    = aws_ecs_task_definition.this.arn
+  desired_count                      = 1
+  iam_role                           = aws_iam_role.ecs_task_role.arn
   deployment_maximum_percent         = 200
   deployment_minimum_healthy_percent = 100
-  health_check_grace_period_seconds = 10
-
-  force_new_deployment = true
-
+  health_check_grace_period_seconds  = 10
+  force_new_deployment               = true
   load_balancer {
     target_group_arn = aws_lb_target_group.nginx-tg.arn
     container_name   = "nginx"

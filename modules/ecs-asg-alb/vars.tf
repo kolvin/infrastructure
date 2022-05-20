@@ -24,7 +24,7 @@ variable "app_port" {
 
 variable "app_command" {
   default     = []
-  type        = list
+  type        = list(any)
   description = "Container image command"
 }
 
