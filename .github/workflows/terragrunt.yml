@@ -13,6 +13,6 @@ jobs:
     - name: Setup Terraform & Terragrunt
       run: |
         brew install tfenv warrensbox/tap/tgswitch
-        tfenv use
+        tfenv install
         tgswitch
     
