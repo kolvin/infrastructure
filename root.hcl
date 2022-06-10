@@ -1,23 +1,24 @@
 locals {
-  account     = read_terragrunt_config(find_in_parent_folders("account.terragrunt.hcl"))
-  environment = read_terragrunt_config(find_in_parent_folders("environment.terragrunt.hcl"))
+  account_config = read_terragrunt_config(find_in_parent_folders("account.terragrunt.hcl"))
 
   # Read config file
   config = jsondecode(file("${get_parent_terragrunt_dir()}/config.json"))
   
   # Extract values from folder namespacing
-  # accounts/<account_ref>/region/<env>"
+  # <account_alias>/<env>/<region>/<component>
   path          = path_relative_to_include()
   path_split    = split("/", local.path)
-  accounts      = local.path_split[0]
-  account_ref   = local.path_split[1]
-  aws_region    = local.path_split[2]
-  env           = local.path_split[3]
+  account_alias = local.path_split[0]
+  env           = local.path_split[1]
+  aws_region    = local.path_split[2] == "global" ? "eu-west-1" : local.path_split[2]
+  component     = local.path_split[3]
+  
 
-  backend_filename = local.config.terragrunt.backend_filename
+  backend_filename   = local.config.terragrunt.backend_filename
+  source_modules_dir = "${get_parent_terragrunt_dir()}/modules"
 
   tags = merge(
-    local.account.locals.common_resource_tags,
+    local.account_config.locals.common_resource_tags,
     {
       Env      = local.env
       Location = "${local.config.base.git_url}/${path_relative_to_include()}"
@@ -39,7 +40,7 @@ terraform {
 
 # Generate an AWS provider block
 generate "aws_provider" {
-  path      = "provider.tf"
+  path      = "_provider.tf"
   if_exists = "overwrite_terragrunt"
   contents  = file("${get_parent_terragrunt_dir()}/templates/aws_provider.tf.tpl")
 }
@@ -53,9 +54,10 @@ generate "terragrunt_local_vars" {
       parent_terragrunt_dir = "${get_parent_terragrunt_dir()}"
       user_data_dir         = "${get_parent_terragrunt_dir()}/user_data"
       template_dir          = "${get_parent_terragrunt_dir()}/templates"
+      source_modules_dir    = "${get_parent_terragrunt_dir()}/modules"
       backend_filename      = "${local.backend_filename}"
       env                   = "${local.env}"
-      aws_account_id        = "${local.account.locals.aws_account_id}"
+      aws_account_id        = "${local.account_config.locals.aws_account_id}"
       aws_region            = "${local.aws_region}"
     }
   EOF
@@ -73,10 +75,10 @@ remote_state {
   backend = "s3"
   config = {
     encrypt        = true
-    bucket         = "terragrunt-state-${local.account_ref}-${local.env}"
-    key            = "${path_relative_to_include()}/terraform.tfstate"
-    region         = local.aws_region
-    dynamodb_table = "terragrunt-locks"
+    bucket         = "terragrunt-state-${local.account_config.locals.aws_account_id}"
+    key            = "${join("/", compact([local.env, local.component, local.aws_region]))}/terraform.tfstate"
+    region         = "eu-west-1"
+    dynamodb_table = "terragrunt-locks-${local.account_config.locals.aws_account_id}"
   }
   generate = {
     path      = local.backend_filename

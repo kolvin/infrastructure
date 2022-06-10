@@ -1,6 +1,6 @@
 {
   "terragrunt": {
-    "backend_filename": "backend.tf"
+    "backend_filename": "_backend.tf"
   },
   "base": {
     "git_url" : "https://github.com/kolvin/infrastructure"
