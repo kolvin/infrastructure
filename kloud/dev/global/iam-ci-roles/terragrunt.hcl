@@ -3,5 +3,5 @@ include "root" {
 }
 
 terraform {
-  source = "./../../../..//modules/iam"
+  source = "./../../../..//modules/iam-role"
 }

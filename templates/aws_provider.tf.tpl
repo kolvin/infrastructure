@@ -9,7 +9,7 @@ provider "aws" {
   default_tags {
     tags = merge(
       var.common_tags,
-      local.additional_tags
+      try(local.additional_tags, {})
     )
   }
 }

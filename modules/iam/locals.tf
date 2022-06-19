@@ -1,3 +1,0 @@
-locals {
-  additional_tags = {}
-}
