@@ -3,7 +3,7 @@ name: 'Module Formating and Validation'
 on:
   push:
     paths:
-      - modules/iam-role
+      - modules/iam-role/**
 
 jobs:
   terraform:
