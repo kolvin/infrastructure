@@ -1,6 +1,9 @@
 name: 'Terragrunt CI/CD'
 
-on: push
+on:
+  push:
+    paths:
+      - kloud/**
 
 env:
   AWS_ACCOUNT_ID : "016272825626"
