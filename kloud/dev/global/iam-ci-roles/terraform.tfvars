@@ -25,6 +25,6 @@ roles = {
     policy_documents = []
     managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"]
     max_session_duration = 21600
-    path = "/"
+    path = "/ci-cd"
   }
 }

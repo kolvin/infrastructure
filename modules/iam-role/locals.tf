@@ -5,8 +5,8 @@ locals {
       [for role_name, details in var.roles :
         [for policy in details.managed_policy_arns :
           {
-            "role_name" = role_name
-            "policy_arn" = policy 
+            "role_name"  = role_name
+            "policy_arn" = policy
           }
         ]
       ]
