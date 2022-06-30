@@ -2,11 +2,7 @@ name: 'Terraform'
 
 on: push
 
-defaults:
-  run:
-    shell: bash
-    working_directory: modules/iam-role/
-
 jobs:
   format:
     uses: kolvin/github-actions/.github/workflows/terraform-format.yaml@494e1186717aa099553daecf6c6366d53f03428f
+    working-directory: modules/iam-role/
