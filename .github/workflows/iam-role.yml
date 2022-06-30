@@ -9,4 +9,4 @@ defaults:
 
 jobs:
   format:
-    uses: kolvin/github-actions/.github/workflows/terraform-format.yaml
+    uses: kolvin/github-actions/.github/workflows/terraform-format.yaml@494e1186717aa099553daecf6c6366d53f03428f
