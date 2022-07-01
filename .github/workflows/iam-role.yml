@@ -9,4 +9,4 @@ defaults:
 
 jobs:
   lint:
-    uses: kolvin/github-actions/.github/workflows/terraform-format.yaml@7520074b9bf608080231c5227f18f0f3e00af046
+    uses: kolvin/github-actions/.github/workflows/terraform-format.yaml@5c44fcb69a4869df7a9d5cdfe6bc0ab25963b370
