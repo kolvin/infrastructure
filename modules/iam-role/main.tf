@@ -37,8 +37,8 @@ resource "aws_iam_role" "this" {
   name                 = each.key
   description          = each.value.description
   assume_role_policy   = length(each.value.principals) > 0 ? data.aws_iam_policy_document.assume_role_aggregated[each.key].json : null
-  path                 = each.value.path
   max_session_duration = each.value.max_session_duration
+  path                 = each.value.path
 }
 
 resource "aws_iam_instance_profile" "this" {
