@@ -9,11 +9,6 @@ env:
   AWS_ACCOUNT_ID : "016272825626"
   AWS_REGION : "eu-west-1"
 
-defaults:
-  run:
-    shell: bash
-    working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
-
 permissions:
   id-token: write
   contents: read
@@ -30,7 +25,6 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
     - uses: actions/checkout@v3
     - name: Setup Terraform & Terragrunt
-      working-directory: /
       run: |
         brew install tfenv warrensbox/tap/tgswitch
         tfenv install
