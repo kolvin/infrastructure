@@ -1,4 +1,4 @@
-name: 'IAM OIDC Provider Module CI'
+name: 'Module CI: IAM OIDC Provider'
 
 on:
   push:

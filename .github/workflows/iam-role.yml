@@ -1,4 +1,4 @@
-name: 'IAM Role CI'
+name: 'Module CI: IAM ROLE'
 
 on:
   push:
