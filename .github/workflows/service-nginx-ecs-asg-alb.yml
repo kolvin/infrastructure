@@ -1,0 +1,42 @@
+name: 'Service: nginx-ecs-asg-alb'
+
+on:
+  push:
+    paths:
+      - kloud/dev/eu-west-1/nginx-ecs-asg-alb
+
+env:
+  AWS_ACCOUNT_ID : "016272825626"
+  AWS_REGION : "eu-west-1"
+
+defaults:
+  run:
+    shell: bash
+    working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terragrunt:
+    runs-on: ubuntu-latest
+    steps:
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/terragrunt-github-ci
+        role-session-name: terragrunt-ci
+        aws-region: ${{ env.AWS_REGION }}
+    - uses: actions/checkout@v3
+    - name: terragrunt fmt
+      run: terragrunt fmt -check -diff
+    - name: terragrunt init
+      run: terragrunt init
+    - name: terragrunt validate
+      run: terragrunt validate
+    - name: terragrunt plan
+      id: plan
+      if: github.event_name == 'pull_request'
+      run: terragrunt plan
+      continue-on-error: true
