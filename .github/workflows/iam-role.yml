@@ -1,4 +1,4 @@
-name: 'IAM Module CI'
+name: 'Module CI'
 
 on: push
 
@@ -9,4 +9,4 @@ defaults:
 
 jobs:
   module:
-    uses: kolvin/github-actions/.github/workflows/terraform-module.yaml@ba950e57fbbbff8bdd091ef116dce41a0b1b90e5
+    uses: kolvin/github-actions/.github/workflows/terraform-module-ci.yaml@00415f30b9dc7cb8825a7951d95955ce0e7ca89a
