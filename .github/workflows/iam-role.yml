@@ -8,5 +8,5 @@ defaults:
     working-directory: modules/iam-role/
 
 jobs:
-  module:
-    uses: kolvin/github-actions/.github/workflows/terraform-module-ci.yaml@00415f30b9dc7cb8825a7951d95955ce0e7ca89a
+  lint:
+    uses: kolvin/github-actions/.github/workflows/terraform-module-lint.yaml@576ddacee730872ee7f42311fa99465fa65bd9b7
