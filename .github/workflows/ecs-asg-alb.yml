@@ -1,4 +1,4 @@
-name: 'Module CI'
+name: 'ECS ASG ALB Module CI'
 
 on:
   push:
