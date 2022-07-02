@@ -1,4 +1,4 @@
-name: 'Module CI'
+name: 'IAM Module CI'
 
 on: push
 
@@ -8,9 +8,5 @@ defaults:
     working-directory: modules/iam-role/
 
 jobs:
-  lint:
-    uses: kolvin/github-actions/.github/workflows/terraform-format.yaml@5c44fcb69a4869df7a9d5cdfe6bc0ab25963b370
-  init:
-    uses: kolvin/github-actions/.github/workflows/terragrunt-init.yaml@65a51e974cff9b3281adab6ed0ac92aca6e69f9c
-  validate:
-      uses: kolvin/github-actions/.github/workflows/terragrunt-validate.yaml@65a51e974cff9b3281adab6ed0ac92aca6e69f9c
+  module:
+    uses: kolvin/github-actions/.github/workflows/terraform-module.yaml@ba950e57fbbbff8bdd091ef116dce41a0b1b90e5
