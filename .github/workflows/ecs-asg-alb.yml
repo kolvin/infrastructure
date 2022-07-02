@@ -3,12 +3,12 @@ name: 'Module CI'
 on:
   push:
     paths:
-      - modules/iam-oidc-provider/
+      - modules/ecs-asg-alb/
 
 defaults:
   run:
     shell: bash
-    working-directory: modules/iam-oidc-provider/
+    working-directory: modules/ecs-asg-alb/
 
 jobs:
   lint:
