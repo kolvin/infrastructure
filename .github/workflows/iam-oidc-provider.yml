@@ -3,12 +3,12 @@ name: 'Module CI'
 on:
   push:
     paths:
-      - modules/iam-role/
+      - modules/iam-oidc-provider/**
 
 defaults:
   run:
     shell: bash
-    working-directory: modules/iam-role/
+    working-directory: modules/iam-oidc-provider/
 
 jobs:
   lint:

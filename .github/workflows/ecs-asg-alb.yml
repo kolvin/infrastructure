@@ -3,7 +3,7 @@ name: 'Module CI'
 on:
   push:
     paths:
-      - modules/ecs-asg-alb/
+      - modules/ecs-asg-alb/**
 
 defaults:
   run:
