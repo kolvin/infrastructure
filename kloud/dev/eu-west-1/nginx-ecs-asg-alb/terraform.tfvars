@@ -3,3 +3,4 @@ env         = "dev"
 app_name    = "nginx"
 app_image   = "nginx:latest"
 app_port    = 80
+git
