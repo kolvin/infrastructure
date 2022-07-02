@@ -44,3 +44,6 @@ jobs:
       run: terragrunt plan
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
       continue-on-error: true
+    - name: terragrunt apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terragrunt apply -auto-approve -input=false
