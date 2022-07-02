@@ -3,7 +3,7 @@ name: 'Service: nginx-ecs-asg-alb'
 on:
   push:
     paths:
-      - kloud/dev/eu-west-1/nginx-ecs-asg-alb
+      - kloud/dev/eu-west-1/nginx-ecs-asg-alb/**
 
 env:
   AWS_ACCOUNT_ID : "016272825626"
