@@ -29,6 +29,11 @@ jobs:
         role-session-name: terragrunt-ci
         aws-region: ${{ env.AWS_REGION }}
     - uses: actions/checkout@v3
+    - name: Setup Terraform & Terragrunt
+      run: |
+        brew install tfenv 
+        tfenv install
+        tgswitch
     - name: terragrunt fmt
       run: terragrunt fmt -check -diff
     - name: terragrunt init
