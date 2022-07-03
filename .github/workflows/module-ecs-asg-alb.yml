@@ -1,0 +1,16 @@
+name: 'Module CI: ecs-asg-alb'
+
+on:
+  push:
+    paths:
+      - modules/ecs-asg-alb/**
+
+defaults:
+  run:
+    shell: bash
+    working-directory: modules/ecs-asg-alb/
+
+jobs:
+  lint:
+    name: lint
+    uses: kolvin/github-actions/.github/workflows/terraform-module-lint.yaml@8981afdb7157ca6ea767a28a06696e3a2a30ee86

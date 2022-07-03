@@ -1,0 +1,16 @@
+name: 'Module CI: iam-role'
+
+on:
+  push:
+    paths:
+      - modules/iam-role/**
+
+defaults:
+  run:
+    shell: bash
+    working-directory: modules/iam-role/
+
+jobs:
+  lint:
+    name: lint
+    uses: kolvin/github-actions/.github/workflows/terraform-module-lint.yaml@8981afdb7157ca6ea767a28a06696e3a2a30ee86
