@@ -50,7 +50,7 @@ jobs:
     - name: terragrunt apply
       id: deploy
       environment:
-      name: ${{ env.ENVIRONMENT }}
+        name: ${{ env.ENVIRONMENT }}
       if: ${{ github.ref != 'refs/heads/main' }} && ${{ github.event_name != 'push' }}
       run: terragrunt apply
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
