@@ -17,7 +17,7 @@ jobs:
   terragrunt:
     runs-on: ubuntu-latest
     environment:
-        name: ${{ env.AWS_ENV }}
+        name: dev
     steps:
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v1
