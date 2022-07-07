@@ -1,9 +1,8 @@
 name: 'Service: nginx-ecs-asg-alb'
 
-on:
-  push:
-    paths:
-      - kloud/dev/eu-west-1/nginx-ecs-asg-alb/**
+on: push
+    # paths:
+    #   - kloud/dev/eu-west-1/nginx-ecs-asg-alb/**
 
 env:
   AWS_ACCOUNT_ID : "016272825626"
@@ -40,12 +39,12 @@ jobs:
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
     - name: terragrunt plan
       id: plan
-      if: github.event_name == 'pull_request'
+      if: ${{ github.event_name != 'pull_request' }}
       run: terragrunt plan
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
       continue-on-error: true
     - name: terragrunt apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: ${{ github.ref != 'refs/heads/main' }} && ${{ github.event_name != 'push' }}
       run: terragrunt apply -auto-approve -input=false
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
       
