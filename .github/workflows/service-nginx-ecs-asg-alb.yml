@@ -5,9 +5,9 @@ on: push
     #   - kloud/dev/eu-west-1/nginx-ecs-asg-alb/**
 
 env:
-  AWS_ACCOUNT_ID : "016272825626"
-  AWS_REGION : "eu-west-1"
-  ENVIRONMENT : "dev"
+  AWS_ACCOUNT_ID: "016272825626"
+  AWS_REGION: "eu-west-1"
+  AWS_ENV: "dev"
 
 permissions:
   id-token: write
@@ -17,7 +17,7 @@ jobs:
   terragrunt:
     runs-on: ubuntu-latest
     environment:
-        name: ${{ env.ENVIRONMENT }}
+        name: ${{ env.AWS_ENV }}
     steps:
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v1
