@@ -7,6 +7,7 @@ on: push
 env:
   AWS_ACCOUNT_ID : "016272825626"
   AWS_REGION : "eu-west-1"
+  ENVIRONMENT : "dev"
 
 permissions:
   id-token: write
@@ -29,12 +30,15 @@ jobs:
         tfenv install
         tgswitch
     - name: terragrunt fmt
+      id: fmt
       run: terragrunt fmt -check -diff
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
     - name: terragrunt init
+      id: init
       run: terragrunt init
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
     - name: terragrunt validate
+      id: validate
       run: terragrunt validate
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
     - name: terragrunt plan
@@ -44,7 +48,10 @@ jobs:
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
       continue-on-error: true
     - name: terragrunt apply
+      id: deploy
+      environment:
+      name: ${{ env.ENVIRONMENT }}
       if: ${{ github.ref != 'refs/heads/main' }} && ${{ github.event_name != 'push' }}
-      run: terragrunt apply -auto-approve -input=false
+      run: terragrunt apply
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
       
