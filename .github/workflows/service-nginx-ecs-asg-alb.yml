@@ -7,7 +7,6 @@ on: push
 env:
   AWS_ACCOUNT_ID: "016272825626"
   AWS_REGION: "eu-west-1"
-  AWS_ENV: "dev"
 
 permissions:
   id-token: write
@@ -16,8 +15,6 @@ permissions:
 jobs:
   terragrunt:
     runs-on: ubuntu-latest
-    environment:
-        name: dev
     steps:
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v1
