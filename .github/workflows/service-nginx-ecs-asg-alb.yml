@@ -12,6 +12,10 @@ permissions:
   id-token: write
   contents: read
 
+defaults:
+ run:
+  working-directory: ./kloud/dev/eu-west-1/nginx-ecs-asg-alb
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -31,15 +35,12 @@ jobs:
     - name: terragrunt fmt
       id: fmt
       run: terragrunt fmt -check -diff
-      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
     - name: terragrunt init
       id: init
       run: terragrunt init
-      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
     - name: terragrunt validate
       id: validate
       run: terragrunt validate
-      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
     - name: cache terragrunt cache
       uses: actions/cache@v3
       with:
@@ -47,7 +48,6 @@ jobs:
         path: |
           .terragrunt-cache/**
           .terraform-lock.hcl
-      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
   plan:
     needs: lint
     runs-on: ubuntu-latest
@@ -68,11 +68,9 @@ jobs:
       id: plan
       if: ${{ github.event_name != 'pull_request' }}
       run: terragrunt plan
-      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
       continue-on-error: true
     - name: cache terragrunt plan
       uses: actions/cache@v3
-      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
       with:
         key: ${{ runner.os }}-terragrunt-plan-${{ hashFiles('**/.terraform.lock.hcl') }}
         path: |
@@ -97,4 +95,3 @@ jobs:
       id: deploy
       if: ${{ github.ref != 'refs/heads/main' }} && ${{ github.event_name != 'push' }}
       run: terragrunt apply
-      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
