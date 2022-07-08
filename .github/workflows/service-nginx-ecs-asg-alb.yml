@@ -13,8 +13,8 @@ permissions:
   contents: read
 
 defaults:
- run:
-  working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
+  run:
+    working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
 
 jobs:
   lint:
