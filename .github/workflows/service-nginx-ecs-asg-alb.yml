@@ -70,13 +70,11 @@ jobs:
       id: plan
       if: ${{ github.event_name != 'pull_request' }}
       run: terragrunt plan
-      continue-on-error: true
     - name: cache terragrunt plan
       uses: actions/cache@v3
       with:
         key: ${{ runner.os }}-terragrunt-plan-${{ hashFiles('**/.terraform.lock.hcl') }}
-        path: |
-          .tgplan.out
+        path: tgplan.out
   apply:
     needs: plan
     runs-on: ubuntu-latest
