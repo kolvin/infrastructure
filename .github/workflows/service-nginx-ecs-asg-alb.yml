@@ -39,9 +39,6 @@ jobs:
     - name: terragrunt init
       id: init
       run: terragrunt init
-    - name: terragrunt validate
-      id: validate
-      run: terragrunt validate
     - name: cache terragrunt cache
       uses: actions/cache@v3
       with:
@@ -49,6 +46,9 @@ jobs:
         path: |
           .terragrunt-cache/**
           .terraform-lock.hcl
+    - name: terragrunt validate
+      id: validate
+      run: terragrunt validate
   plan:
     needs: lint
     runs-on: ubuntu-latest
