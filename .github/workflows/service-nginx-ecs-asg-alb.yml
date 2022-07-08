@@ -14,14 +14,11 @@ permissions:
 
 defaults:
   run:
-    working-directory: "kloud/dev/eu-west-1/nginx-ecs-asg-alb"
+    working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ${{ env.DIR }}
     steps:
     - name: configure aws credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -53,9 +50,6 @@ jobs:
           .terragrunt-cache/**
           .terraform-lock.hcl
   plan:
-    defaults:
-      run:
-        working-directory: ${{ env.DIR }}
     needs: lint
     runs-on: ubuntu-latest
     steps:
@@ -67,6 +61,7 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
     - uses: actions/checkout@v3
     - name: Setup Terraform & Terragrunt
+      working-directory: ./
       run: |
         brew install tfenv warrensbox/tap/tgswitch
         tfenv install
@@ -83,9 +78,6 @@ jobs:
         path: |
           .tgplan.out
   apply:
-    defaults:
-      run:
-        working-directory: ${{ env.DIR }}
     needs: plan
     runs-on: ubuntu-latest
     steps:
@@ -97,6 +89,7 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
     - uses: actions/checkout@v3
     - name: Setup Terraform & Terragrunt
+      working-directory: ./
       run: |
         brew install tfenv warrensbox/tap/tgswitch
         tfenv install
