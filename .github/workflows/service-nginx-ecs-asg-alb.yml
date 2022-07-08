@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  terragrunt:
+  lint:
     runs-on: ubuntu-latest
     steps:
     - name: configure aws credentials
@@ -40,6 +40,44 @@ jobs:
       id: validate
       run: terragrunt validate
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
+  plan:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/terragrunt-github-ci
+        role-session-name: terragrunt-ci
+        aws-region: ${{ env.AWS_REGION }}
+    - uses: actions/checkout@v3
+    - name: Setup Terraform & Terragrunt
+      run: |
+        brew install tfenv warrensbox/tap/tgswitch
+        tfenv install
+        tgswitch
+    - name: terragrunt plan
+      id: plan
+      if: ${{ github.event_name != 'pull_request' }}
+      run: terragrunt plan
+      working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
+      continue-on-error: true
+  apply:
+    needs: plan
+    runs-on: ubuntu-latest
+    steps:
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/terragrunt-github-ci
+        role-session-name: terragrunt-ci
+        aws-region: ${{ env.AWS_REGION }}
+    - uses: actions/checkout@v3
+    - name: Setup Terraform & Terragrunt
+      run: |
+        brew install tfenv warrensbox/tap/tgswitch
+        tfenv install
+        tgswitch
     - name: terragrunt plan
       id: plan
       if: ${{ github.event_name != 'pull_request' }}
@@ -51,4 +89,3 @@ jobs:
       if: ${{ github.ref != 'refs/heads/main' }} && ${{ github.event_name != 'push' }}
       run: terragrunt apply
       working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
-      
