@@ -77,7 +77,7 @@ jobs:
         path: |
           **/tgplan.out
   apply:
-    if: ${{ steps.plan.outputs.cache-hit != 'true' }}
+    if: jobs.plan.outputs.cache-hit != 'true'
     needs: plan
     runs-on: ubuntu-latest
     steps:
