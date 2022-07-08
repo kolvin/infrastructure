@@ -74,7 +74,8 @@ jobs:
       uses: actions/cache@v3
       with:
         key: ${{ runner.os }}-terragrunt-plan-${{ hashFiles('**/.terraform.lock.hcl') }}
-        path: "**/tgplan.out"
+        path: |
+          **/tgplan.out
   apply:
     needs: plan
     runs-on: ubuntu-latest
