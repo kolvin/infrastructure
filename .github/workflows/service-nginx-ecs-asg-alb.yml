@@ -73,9 +73,8 @@ jobs:
     - name: cache terragrunt plan
       uses: actions/cache@v3
       with:
-        key: ${{ runner.os }}-terragrunt-plan-${{ hashFiles('**/tgplan.out') }}
-        path: |
-          **/tgplan.out
+        key: ${{ runner.os }}-terragrunt-plan-${{ hashFiles('tgplan.out') }}
+        path: tgplan.out
   apply:
     if: ${{ needs.plan.outputs.cache-hit == 'false' }}
     needs: plan
