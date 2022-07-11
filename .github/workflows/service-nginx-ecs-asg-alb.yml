@@ -37,7 +37,7 @@ jobs:
       id: fmt
       run: terragrunt fmt -check -diff
     - name: terragrunt init
-      id: init
+      id: init  
       run: terragrunt init
     - name: cache terragrunt files
       uses: actions/cache@v3
@@ -45,7 +45,7 @@ jobs:
         key: ${{ github.sha }}-terragrunt-cache
         path: |
           **/.terragrunt-cache/**
-          **/.terraform-lock.hcl
+          **/.terraform.lock.hcl
     - name: terragrunt validate
       id: validate
       run: terragrunt validate
@@ -72,7 +72,7 @@ jobs:
         key: ${{ github.sha }}-terragrunt-cache
         path: |
           **/.terragrunt-cache/**
-          **/.terraform-lock.hcl
+          **/.terraform.lock.hcl
     - name: terragrunt plan
       id: plan
       if: ${{ github.event_name != 'pull_request' }}
