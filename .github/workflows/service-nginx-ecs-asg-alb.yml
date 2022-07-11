@@ -39,10 +39,10 @@ jobs:
     - name: terragrunt init
       id: init
       run: terragrunt init
-    - name: cache terragrunt cache
+    - name: cache terragrunt files
       uses: actions/cache@v3
       with:
-        key: ${{ runner.os }}-terragrunt-cache-${{ hashFiles('**/.terraform.lock.hcl') }}
+        key: ${{ github.sha }}-terragrunt-cache
         path: |
           **/.terragrunt-cache/**
           **/.terraform-lock.hcl
@@ -66,17 +66,22 @@ jobs:
         brew install tfenv warrensbox/tap/tgswitch
         tfenv install
         tgswitch
+    - name: cache terragrunt files
+      uses: actions/cache@v3
+      with:
+        key: ${{ github.sha }}-terragrunt-cache
+        path: |
+          **/.terragrunt-cache/**
+          **/.terraform-lock.hcl
     - name: terragrunt plan
       id: plan
       if: ${{ github.event_name != 'pull_request' }}
       run: |
         terragrunt plan
-        ls -la
-        pwd
     - name: cache terragrunt plan
       uses: actions/cache@v3
       with:
-        key: ${{ runner.os }}-terragrunt-plan-${{ hashFiles('**/tgplan.out') }}
+        key: ${{ github.sha }}-terragrunt-plan
         path: |
           **/tgplan.out
   apply:
@@ -97,6 +102,12 @@ jobs:
         brew install tfenv warrensbox/tap/tgswitch
         tfenv install
         tgswitch
+    - name: cache terragrunt plan
+      uses: actions/cache@v3
+      with:
+        key: ${{ github.sha }}-terragrunt-plan
+        path: |
+          **/tgplan.out
     - name: terragrunt apply
       id: deploy
       if: ${{ github.ref != 'refs/heads/main' }} && ${{ github.event_name != 'push' }}
