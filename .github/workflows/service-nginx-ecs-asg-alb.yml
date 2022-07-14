@@ -87,7 +87,7 @@ jobs:
           **/tgplan.out
   apply:
     needs: plan
-    if: ${{ needs.plan.steps.cache-plan.outputs.cache-hit === 'true' }}
+    if: ${{ needs.plan.steps.cache-plan.outputs.cache-hit == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - name: configure aws credentials
