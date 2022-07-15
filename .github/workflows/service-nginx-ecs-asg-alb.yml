@@ -17,99 +17,11 @@ defaults:
     working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/terragrunt-github-ci
-        role-session-name: terragrunt-ci
-        aws-region: ${{ env.AWS_REGION }}
-    - uses: actions/checkout@v3
-    - name: Setup Terraform & Terragrunt
-      working-directory: ./
-      run: |
-        brew install tfenv warrensbox/tap/tgswitch
-        tfenv install
-        tgswitch
-    - name: terragrunt fmt
-      id: fmt
-      run: terragrunt fmt -check -diff
-    - name: terragrunt init
-      id: init  
-      run: terragrunt init
-    - name: cache terragrunt files
-      uses: actions/cache@v3
-      with:
-        key: ${{ github.sha }}-terragrunt-cache
-        path: |
-          **/.terragrunt-cache/**
-          **/.terraform.lock.hcl
-    - name: terragrunt validate
-      id: validate
-      run: terragrunt validate
-  plan:
-    needs: lint
-    runs-on: ubuntu-latest
-    steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/terragrunt-github-ci
-        role-session-name: terragrunt-ci
-        aws-region: ${{ env.AWS_REGION }}
-    - uses: actions/checkout@v3
-    - name: Setup Terraform & Terragrunt
-      working-directory: ./
-      run: |
-        brew install tfenv warrensbox/tap/tgswitch
-        tfenv install
-        tgswitch
-    - name: cache terragrunt files
-      uses: actions/cache@v3
-      with:
-        key: ${{ github.sha }}-terragrunt-cache
-        path: |
-          **/.terragrunt-cache/**
-          **/.terraform.lock.hcl
-    - name: terragrunt plan
-      id: plan
-      if: ${{ github.event_name != 'pull_request' }}
-      run: |
-        terragrunt plan
-    - name: cache terragrunt plan
-      id: cache-plan
-      uses: actions/cache@v3
-      with:
-        key: ${{ github.sha }}-terragrunt-plan
-        path: |
-          **/tgplan.out
-  apply:
-    needs: plan
-    if: ${{ needs.plan.steps.cache-plan.outputs.cache-hit != 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/terragrunt-github-ci
-        role-session-name: terragrunt-ci
-        aws-region: ${{ env.AWS_REGION }}
-    - uses: actions/checkout@v3
-    - name: Setup Terraform & Terragrunt
-      working-directory: ./
-      run: |
-        brew install tfenv warrensbox/tap/tgswitch
-        tfenv install
-        tgswitch
-    - name: cache terragrunt plan
-      uses: actions/cache@v3
-      with:
-        key: ${{ github.sha }}-terragrunt-plan
-        path: |
-          **/tgplan.out
-    - name: terragrunt apply
-      id: deploy
-      if: ${{ github.ref != 'refs/heads/main' }} && ${{ github.event_name != 'push' }}
-      run: terragrunt apply
+  name: setup
+  uses: kolvin/github-actions/.github/workflows/terragrunt-setup.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
+  name: lint
+  uses: kolvin/github-actions/.github/workflows/terragrunt-lint.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
+  name: plan
+  uses: kolvin/github-actions/.github/workflows/terragrunt-plan.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
+  name: apply
+  uses: kolvin/github-actions/.github/workflows/terragrunt-apply.yaml@8e218b735a189a49716a3c8cad4e922e501ff3d0
