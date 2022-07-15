@@ -17,11 +17,15 @@ defaults:
     working-directory: kloud/dev/eu-west-1/nginx-ecs-asg-alb
 
 jobs:
-  name: setup
-  uses: kolvin/github-actions/.github/workflows/terragrunt-setup.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
-  name: lint
-  uses: kolvin/github-actions/.github/workflows/terragrunt-lint.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
-  name: plan
-  uses: kolvin/github-actions/.github/workflows/terragrunt-plan.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
-  name: apply
-  uses: kolvin/github-actions/.github/workflows/terragrunt-apply.yaml@8e218b735a189a49716a3c8cad4e922e501ff3d0
+  setup:
+    name: setup
+    uses: kolvin/github-actions/.github/workflows/terragrunt-setup.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
+  lint:
+    name: lint
+    uses: kolvin/github-actions/.github/workflows/terragrunt-lint.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
+  plan:
+    name: plan
+    uses: kolvin/github-actions/.github/workflows/terragrunt-plan.yaml@02b600bf7d082892a0a95cc40c79d908229ef516
+  apply:
+    name: apply
+    uses: kolvin/github-actions/.github/workflows/terragrunt-apply.yaml@8e218b735a189a49716a3c8cad4e922e501ff3d0
